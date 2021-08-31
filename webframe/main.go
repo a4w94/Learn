@@ -16,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"gopkg.in/yaml.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -50,6 +51,24 @@ type DataDetail struct {
 	ActivityContactTelNo    string `json:"activityContactTelNo"`
 	ActivityParticipants    string `json:"activityParticipants"`
 	ActivityWebsit          string `json:"activityWebsit"`
+}
+
+type News struct {
+	Status       string `json:"status"`
+	TotalResults int    `json:"totalResults"`
+	Articles     []struct {
+		Source struct {
+			Id          string `json:"id"`
+			Name        string `json:"name"`
+			Author      string `json:"author"`
+			Title       string `json:"title"`
+			Description string `json:"description"`
+			Url         string `json:"url "`
+			UrltoImage  string `json:"urlToImage`
+			PublishedAt string `json:"publishedAt"`
+			Content     string `json:"content"`
+		} `json:"source"`
+	} `json:"articles"`
 }
 
 func HandleGetData(c *gin.Context) {
@@ -142,6 +161,52 @@ func HandleGetDataTest() {
 
 }
 
+func HandleGetDataNewsTest() {
+	var newsurl = "https://newsapi.org/v2/everything?q=test&apiKey=5a88407f70554b379f9000506371942d"
+	resq, err := http.Get(newsurl)
+	if err != nil {
+		panic(err)
+	}
+	body, _ := ioutil.ReadAll(resq.Body)
+	//fmt.Println(string(body))
+
+	var mapresult News
+	err1 := json.Unmarshal(body, &mapresult)
+	if err1 != nil {
+		fmt.Println("jsontomap fail")
+	}
+	//fmt.Println(string(body))
+
+	fmt.Println(mapresult)
+	//arr := make([][]string, maxcount)
+
+	// for k, v := range mapresult.Articles {
+
+	// 	fmt.Println(k)
+	// 	//fmt.Println(v)
+	// 	// fmt.Println()
+	// 	tmparr := []string{}
+	// 	key := reflect.TypeOf(v)    //鍵值
+	// 	value := reflect.ValueOf(v) //對應值
+	// 	for i := 0; i < key.NumField(); i++ {
+	// 		tmparr = append(tmparr, value.Field(i).String())
+	// 		//fmt.Println(value.Field(i).String())
+	// 	}
+	// 	arr[k] = tmparr
+	// 	//fmt.Println(tmp)
+
+	// }
+
+	//StructToMap(mapresult)
+	//input2 := input["Data"]
+	//test := StructToMap(input2)
+
+	//fmt.Printf("%+v", input["Data"])
+
+	//fmt.Println(test)
+
+}
+
 func StructToMap(obj Sport) map[string]interface{} {
 	obj1 := reflect.TypeOf(obj)
 	obj2 := reflect.ValueOf(obj)
@@ -166,7 +231,8 @@ func main() {
 
 	// gormtest()
 	//HandleGetDataTest()
-	i := 1
+	HandleGetDataNewsTest()
+	i := 0
 	if i == 1 {
 		// mysqltest()
 		// mytest.InitDB()
@@ -313,4 +379,23 @@ func LoginAuth(c *gin.Context) {
 		})
 		return
 	}
+}
+
+type Info struct {
+	Name string `yaml:"Name"`
+	Age  int    `yaml:"Age"`
+}
+
+func ReadYaml() {
+	var info Info
+	config, err := ioutil.ReadFile("./info.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	err1 := yaml.Unmarshal(config, &info)
+	if err1 != nil {
+		panic(err)
+	}
+	fmt.Println(info)
 }
