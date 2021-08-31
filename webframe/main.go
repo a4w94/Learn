@@ -58,21 +58,22 @@ type News struct {
 	TotalResults int    `json:"totalResults"`
 	Articles     []struct {
 		Source struct {
-			Id          string `json:"id"`
-			Name        string `json:"name"`
-			Author      string `json:"author"`
-			Title       string `json:"title"`
-			Description string `json:"description"`
-			Url         string `json:"url "`
-			UrltoImage  string `json:"urlToImage`
-			PublishedAt string `json:"publishedAt"`
-			Content     string `json:"content"`
+			Id string `json:"id"`
+			// Name        string `json:"name"`
+			// Author      string `json:"author"`
+			// Title       string `json:"title"`
+			// Description string `json:"description"`
+			Url string `json:"url"`
+			// UrltoImage  string `json:"urlToImage`
+			// PublishedAt string `json:"publishedAt"`
+			Content string `json:"content"`
 		} `json:"source"`
 	} `json:"articles"`
 }
 
+//https://newsapi.org/
 func HandleGetData(c *gin.Context) {
-	var sporturl = "https://isports.sa.gov.tw/Api/Rest/V1/Activity.svc/GetActivityList?county=A&activityKind=1&paging=false"
+	var sporturl = "https://newsapi.org/v2/everything?q=tesla&from=2021-07-31&sortBy=publishedAt&apiKey=5a88407f70554b379f9000506371942d"
 	resq, err := http.Get(sporturl)
 	if err != nil {
 		panic(err)
@@ -162,7 +163,7 @@ func HandleGetDataTest() {
 }
 
 func HandleGetDataNewsTest() {
-	var newsurl = "https://newsapi.org/v2/everything?q=test&apiKey=5a88407f70554b379f9000506371942d"
+	var newsurl = "https://newsapi.org/v2/everything?q=Apple&apiKey=5a88407f70554b379f9000506371942d"
 	resq, err := http.Get(newsurl)
 	if err != nil {
 		panic(err)
