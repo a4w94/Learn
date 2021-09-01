@@ -220,7 +220,7 @@ func HandleGetDataNews(c *gin.Context) {
 
 	_, keyword := c.GetPostForm("keyword")
 
-	url := fmt.Sprintf("https://newsapi.org/v2/everything?q=%s&apiKey=5a88407f70554b379f9000506371942d", keyword)
+	url := fmt.Sprintf("https://newsapi.org/v2/everything?q=%s&from=%s&to=%s&sortBy=%s&apiKey=5a88407f70554b379f9000506371942d", keyword)
 	fmt.Println(url)
 
 	returnmap := NewDataGETAPI()
