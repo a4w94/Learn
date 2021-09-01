@@ -58,16 +58,16 @@ type News struct {
 	TotalResults int    `json:"totalResults"`
 	Articles     []struct {
 		Source struct {
-			Id string `json:"id"`
-			// Name        string `json:"name"`
-			// Author      string `json:"author"`
-			// Title       string `json:"title"`
-			// Description string `json:"description"`
-			Url string `json:"url"`
-			// UrltoImage  string `json:"urlToImage`
-			// PublishedAt string `json:"publishedAt"`
-			Content string `json:"content"`
+			Id   string `json:"id"`
+			Name string `json:"name"`
 		} `json:"source"`
+		Author      string `json:"author"`
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		Url         string `json:"url"`
+		UrltoImage  string `json:"urlToImage`
+		PublishedAt string `json:"publishedAt"`
+		Content     string `json:"content"`
 	} `json:"articles"`
 }
 
@@ -163,7 +163,7 @@ func HandleGetDataTest() {
 }
 
 func HandleGetDataNewsTest() {
-	var newsurl = "https://newsapi.org/v2/everything?q=Apple&apiKey=5a88407f70554b379f9000506371942d"
+	var newsurl = "https://newsapi.org/v2/everything?q=bitcoin&apiKey=5a88407f70554b379f9000506371942d"
 	resq, err := http.Get(newsurl)
 	if err != nil {
 		panic(err)
@@ -178,10 +178,19 @@ func HandleGetDataNewsTest() {
 	}
 	//fmt.Println(string(body))
 
-	fmt.Println(mapresult)
-	//arr := make([][]string, maxcount)
+	//fmt.Println(mapresult.Articles[0])
+	arr := make([][]string, mapresult.TotalResults)
 
-	// for k, v := range mapresult.Articles {
+	for k, v := range mapresult.Articles {
+
+		arr[k] = append(arr[k], v.Source.Id, v.Source.Name, v.Author, v.Title, v.Description, v.Url, v.UrltoImage, v.Content)
+
+	}
+
+	//returnmapresult := make(map[string]interface{})
+
+	//returnmapresult[]
+	//fmt.Println(arr[1])
 
 	// 	fmt.Println(k)
 	// 	//fmt.Println(v)
@@ -207,6 +216,49 @@ func HandleGetDataNewsTest() {
 	//fmt.Println(test)
 
 }
+func HandleGetDataNews(c *gin.Context) {
+
+	_, keyword := c.GetPostForm("keyword")
+
+	url := fmt.Sprintf("https://newsapi.org/v2/everything?q=%s&apiKey=5a88407f70554b379f9000506371942d", keyword)
+	fmt.Println(url)
+
+	returnmap := NewDataGETAPI()
+	c.HTML(http.StatusOK, "index.html", returnmap)
+
+}
+
+func NewDataGETAPI() map[string]interface{} {
+	var newsurl = "https://newsapi.org/v2/everything?q=bitcoin&apiKey=5a88407f70554b379f9000506371942d"
+	resq, err := http.Get(newsurl)
+	if err != nil {
+		panic(err)
+	}
+	body, _ := ioutil.ReadAll(resq.Body)
+	//fmt.Println(string(body))
+
+	var mapresult News
+	err1 := json.Unmarshal(body, &mapresult)
+	if err1 != nil {
+		fmt.Println("jsontomap fail")
+	}
+	//fmt.Println(string(body))
+
+	//fmt.Println(mapresult.Articles[0])
+	arr := make([][]string, mapresult.TotalResults)
+
+	for k, v := range mapresult.Articles {
+
+		arr[k] = append(arr[k], v.Source.Id, v.Source.Name, v.Author, v.Title, v.Description, v.Url, v.UrltoImage, v.Content)
+
+	}
+
+	returnmap := make(map[string]interface{})
+	returnmap["DetailData"] = arr
+	returnmap["TableTitle"] = []string{"Source.Id", "Source.Name", "Author", "Title", "Description", "Url", "UrltoImage", "Content"}
+
+	return returnmap
+}
 
 func StructToMap(obj Sport) map[string]interface{} {
 	obj1 := reflect.TypeOf(obj)
@@ -221,7 +273,9 @@ func StructToMap(obj Sport) map[string]interface{} {
 }
 
 func main() {
-
+	keyword := "apple"
+	url := fmt.Sprintf("https://newsapi.org/v2/everything?q=%s&apiKey=5a88407f70554b379f9000506371942d", keyword)
+	fmt.Println(url)
 	// apiserver := gin.Default()
 	// apiserver.GET("/get", HandleGet)
 	// apiserver.POST("/getdata", HandleGetData)
@@ -245,6 +299,7 @@ func main() {
 		server.LoadHTMLGlob("template/html/*")        //讀取html靜態資源
 		server.Static("/assets", "./template/assets") //讀取css靜態資源
 		//server.GET("/test", test)
+		server.POST("/news", HandleGetDataNews)
 		server.GET("/login", LoginPage)
 		server.POST("/login", LoginAuth)
 		server.Run(loginport)
