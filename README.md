@@ -1,4 +1,0 @@
-# Learn
-# GOLEARN
-# Learn
-# Learn
