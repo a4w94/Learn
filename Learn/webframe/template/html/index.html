@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <body style="overflow-y:auto" >
+        <table boder="1px solid black">
+            <colgroup span="12" style="background-color: gray;"></colgroup>
+            <colgroup style="background-color: green;"></colgroup>
+          
+            {{range $k,$v := .Thead}}
+               <th>{{$v}}</th>
+            {{end}}
+            {{range $k, $m := .Data}}
+            <tr>  
+                {{range $t, $s := $m}}
+                    <td>{{$s}}</td>  
+                    {{end}}    
+            </tr>
+            {{end}}
+        </table>
+           
+
+    </body>
+</html>
